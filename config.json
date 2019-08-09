@@ -1,0 +1,25 @@
+{
+    "global":{
+        "processNumber": 2,
+        "delay": 10,
+        "mode": "async",
+        "cookie": false,
+        "log": {
+            "log": false,
+            "level": "INFO"
+        }
+    },
+    "stream": [{
+        "url": "https://google.com",
+        "check": "",
+        "method": "GET",
+        "referer": "",
+        "data": ""
+    },{
+        "url": "https://facebook.com",
+        "check": "",
+        "method": "GET",
+        "referer": "",
+        "data": ""
+    }]
+}

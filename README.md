@@ -11,7 +11,7 @@
 - referer：对应Header中的referer
 - data：POST提交的数据（可以使用随机值）
 
-# 随机值
+## 随机值
 - [QQ] 随机QQ号
 - [Phone] 随机手机号
 - [String_10] 随机10位的字符串

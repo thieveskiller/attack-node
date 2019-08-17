@@ -2,21 +2,19 @@
     "global":{
         "processNumber": 2,
         "delay": 10,
-        "mode": "async",
-        "cookie": false,
         "log": {
             "log": false,
-            "level": "INFO"
+            "level": 3
         }
     },
     "stream": [{
-        "url": "https://google.com",
+        "url": "https://fk.umikm.com/ajax/getgoodlist",
         "check": "",
-        "method": "GET",
+        "method": "POST",
         "referer": "",
-        "data": ""
+        "data": "${random.number(2)}"
     },{
-        "url": "https://facebook.com",
+        "url": "https://fk.umikm.com/shop/shop/popNotice?userid=${random.number(5)}",
         "check": "",
         "method": "GET",
         "referer": "",

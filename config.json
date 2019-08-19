@@ -4,6 +4,7 @@
         "thread": 500,
         "delay": 1,
         "maxMemory": 120,
+        "time": 60,
         "log": {
             "log": false,
             "level": 3

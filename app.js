@@ -5,6 +5,10 @@ const config = JSON.parse( fs.readFileSync( "./config.json" ).toString() );
 const log = Number( config.global.log.level );
 let startTime = new Date().getTime();
 
+setTimeout(() => {
+    main_exit()
+}, config.global.time*1000);
+
 const logger = ( type, title, msg ) => {
     let time = new Date();
     if ( type == "DEBUG" && log >= 4 ) {
@@ -144,7 +148,7 @@ var processEvent = {
     }
 }
 
-process.on( 'SIGINT', function () {
+function main_exit(){
     processes.forEach( e => {
         e.send( [ "exit" ] );
     } )
@@ -160,4 +164,8 @@ process.on( 'SIGINT', function () {
 
     logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
     process.exit( 0 );
+}
+
+process.on( 'SIGINT', function () {
+    main_exit()
 } );

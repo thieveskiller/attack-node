@@ -3,6 +3,7 @@ const fs = require( "fs" );
 const os = require( "os" );
 const config = JSON.parse( fs.readFileSync( "./config.json" ).toString() );
 const log = Number( config.global.log.level );
+let startTime = new Date().getTime();
 
 const logger = ( type, title, msg ) => {
     let time = new Date();
@@ -153,6 +154,10 @@ process.on( 'SIGINT', function () {
             logger( "INFO", `[INFO][Process-Main]`, `${e}: ${codeList[e]}` );
         }
     } )
+
+    let t = new Date().getTime() - startTime;
+    logger( "INFO", `[INFO][Process-Main]`, `${t/1000/60} min` );
+
     logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
     process.exit( 0 );
 } );

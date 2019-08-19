@@ -1,16 +1,16 @@
 {
     "global":{
         "processNumber": 6,
-        "thread": 200,
-        "delay": 10,
-        "maxMemory": 100,
+        "thread": 500,
+        "delay": 1,
+        "maxMemory": 120,
         "log": {
             "log": false,
             "level": 3
         }
     },
     "stream": [{
-        "url": "https://1.1.1.1",
+        "url": "http://baidu.com",
         "check": "",
         "method": "GET",
         "referer": "",

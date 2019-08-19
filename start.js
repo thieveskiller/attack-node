@@ -15,11 +15,13 @@ const success = ( data, regexp ) => {
     }
 }
 
-setInterval(() => {
-    if((process.memoryUsage().heapUsed/1048576) > maxMemory){
-        process.exit()
-    }
-}, 100);
+if(maxMemory > 0){
+    setInterval(() => {
+        if((process.memoryUsage().heapUsed/1048576) > maxMemory){
+            process.exit()
+        }
+    }, 100);
+}
 
 process.on( 'message', ( msg ) => {
     if ( msg[ 0 ] == "exit" ) {

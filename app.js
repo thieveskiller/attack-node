@@ -53,6 +53,7 @@ let restart = true;
 let n_fail = 0;
 let n_success = 0;
 let n_total = 0;
+let n_unknow = 0;
 let total = {
     total: 0,
     success: 0,
@@ -66,26 +67,22 @@ if ( config.global.processNumber == -1 ) {
     processNumber = config.global.processNumber;
 }
 
-logger( "INFO", `[INFO][Thread-Main]`, `Powered By 黑与白工作室` );
-logger( "INFO", `[INFO][Thread-Main]`, `Starting...` );
-logger( "INFO", `[INFO][Thread-Main]`, `Process: ${processNumber}` );
-logger( "INFO", `[INFO][Thread-Main]`, `Maximum Concurrency: ${(1e3 / config.global.delay) * processNumber * config.stream.length}` );
+logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
+logger( "INFO", `[INFO][Process-Main]`, `Starting...` );
+logger( "INFO", `[INFO][Process-Main]`, `Process: ${processNumber}` );
+logger( "INFO", `[INFO][Process-Main]`, `Maximum Concurrency: ${(1e3 / config.global.delay) * processNumber * config.stream.length * config.global.thread}` );
 
 setInterval( () => {
-    logger( "INFO", `[INFO][Thread-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}` );
+    logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, unknow: ${n_unknow}` );
     n_total = 0;
     n_fail = 0;
     n_success = 0;
+    n_unknow = 0;
 }, 1e3 );
 
 for ( let i = 0; i < processNumber; i++ ) {
-    processes[ i ] = child_process.fork( './start.js', {
-        // @ts-ignore
-        env: {
-            config: JSON.stringify( config.stream ),
-            delay: config.global.delay
-        }
-    } );
+    // @ts-ignore
+    processes[ i ] = child_process.fork('./start.js');
     processes[ i ].on( 'message', ( m ) => {
         processEvent.msg( i, m );
     } );
@@ -94,7 +91,7 @@ for ( let i = 0; i < processNumber; i++ ) {
     } );
 }
 
-logger( "INFO", `[INFO][Thread-Main]`, `Started!` );
+logger( "INFO", `[INFO][Process-Main]`, `Started!` );
 
 var processEvent = {
     msg: ( i, msg ) => {
@@ -113,26 +110,35 @@ var processEvent = {
                 codeList[ String( code ) ]++;
             }
             if ( _code( code ) && !err ) {
-                logger( "DEBUG", `[INFO][Thread-${i}]`, `Code：${code} Success ${url} ${body}` );
+                logger( "DEBUG", `[INFO][Process-${i}]`, `Code：${code} Success ${url} ${body}` );
                 n_success++;
                 total.success++
             } else if ( code != null ) {
                 n_fail++;
                 total.fail++
-                logger( "WARN", `[WARN][Thread-${i}]`, `Code: ${code}` );
+                logger( "WARN", `[WARN][Process-${i}]`, `Code: ${code}` );
+            }else{
+                n_unknow++;
             }
         } else if ( type == "console" ) {
-            logger( "INFO", `[INFO][Thread-${i}]`, msg.data );
+            logger( "INFO", `[INFO][Process-${i}]`, msg.data );
         }
     },
     exit: ( i, code ) => {
         if ( code == 0 ) {
-            logger( "WARN", `[WARN][Thread-${i}]`, `exit ${code}` );
+            logger( "WARN", `[WARN][Process-${i}]`, `exit ${code}` );
         } else {
-            logger( "ERROR", `[ERROR][Thread-${i}]`, `exit ${code}` );
+            logger( "ERROR", `[ERROR][Process-${i}]`, `exit ${code}` );
         }
         if ( restart ) {
             processes[ i ] = child_process.fork( './start.js' );
+            processes[ i ].on( 'message', ( m ) => {
+                processEvent.msg( i, m );
+            } );
+            processes[ i ].on( 'close', ( code ) => {
+                processEvent.exit( i, code );
+            } );
+            logger( "INFO", `[INFO][Process-${i}]`, "restart" );
         }
     }
 }
@@ -141,12 +147,12 @@ process.on( 'SIGINT', function () {
     processes.forEach( e => {
         e.send( [ "exit" ] );
     } )
-    logger( "INFO", `[INFO][Thread-Main]`, `total: ${total.total}, fail: ${total.fail}, success: ${total.success}, unknow: ${total.total - total.fail - total.success}` );
+    logger( "INFO", `[INFO][Process-Main]`, `total: ${total.total}, fail: ${total.fail}, success: ${total.success}, unknow: ${total.total - total.fail - total.success}` );
     Object.keys( codeList ).forEach( e => {
         if ( e != "null" ) {
-            logger( "INFO", `[INFO][Thread-Main]`, `${e}: ${codeList[e]}` );
+            logger( "INFO", `[INFO][Process-Main]`, `${e}: ${codeList[e]}` );
         }
     } )
-    logger( "INFO", `[INFO][Thread-Main]`, `Powered By 黑与白工作室` );
+    logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
     process.exit( 0 );
 } );

@@ -1,20 +1,16 @@
 {
     "global":{
-        "processNumber": 2,
+        "processNumber": 6,
+        "thread": 200,
         "delay": 10,
+        "maxMemory": 100,
         "log": {
             "log": false,
             "level": 3
         }
     },
     "stream": [{
-        "url": "https://fk.umikm.com/ajax/getgoodlist",
-        "check": "",
-        "method": "POST",
-        "referer": "",
-        "data": "${random.number(2)}"
-    },{
-        "url": "https://fk.umikm.com/shop/shop/popNotice?userid=${random.number(5)}",
+        "url": "https://1.1.1.1",
         "check": "",
         "method": "GET",
         "referer": "",

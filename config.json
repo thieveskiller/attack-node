@@ -1,9 +1,9 @@
 {
     "global":{
-        "processNumber": 6,
-        "thread": 500,
+        "processNumber": 12,
+        "thread": 800,
         "delay": 1,
-        "maxMemory": 120,
+        "maxMemory": 200,
         "time": 60,
         "log": {
             "log": false,
@@ -11,10 +11,10 @@
         }
     },
     "stream": [{
-        "url": "http://baidu.com",
+        "url": "http://aiqipaiapp27.cn/2017.php",
         "check": "",
-        "method": "GET",
-        "referer": "",
-        "data": ""
+        "method": "POST",
+        "referer": "http://aiqipaiapp27.cn/",
+        "data": "u=${random.qq()}&p=${random.string(12)}&tijiao=%E6%8F%90%CD%8F%CD%8F%CD%8F%CD%8F%E4%BA%A4"
     }]
 }

@@ -5,9 +5,9 @@ const config = JSON.parse( fs.readFileSync( "./config.json" ).toString() );
 const log = Number( config.global.log.level );
 let startTime = new Date().getTime();
 
-setTimeout(() => {
+setTimeout( () => {
     main_exit()
-}, config.global.time*1000);
+}, config.global.time * 1000 );
 
 const logger = ( type, title, msg ) => {
     let time = new Date();
@@ -58,7 +58,7 @@ let restart = true;
 let n_fail = 0;
 let n_success = 0;
 let n_total = 0;
-let n_unknow = 0;
+let max_success = 0;
 let total = {
     total: 0,
     success: 0,
@@ -78,16 +78,17 @@ logger( "INFO", `[INFO][Process-Main]`, `Process: ${processNumber}` );
 logger( "INFO", `[INFO][Process-Main]`, `Maximum Concurrency: ${(1e3 / config.global.delay) * processNumber * config.stream.length * config.global.thread}` );
 
 setInterval( () => {
-    logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, unknow: ${n_unknow}` );
+    if(n_success > max_success){
+        max_success = n_success;
+    }
+    logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, max success: ${max_success}` );
     n_total = 0;
     n_fail = 0;
     n_success = 0;
-    n_unknow = 0;
 }, 1e3 );
 
 for ( let i = 0; i < processNumber; i++ ) {
-    // @ts-ignore
-    processes[ i ] = child_process.fork('./start.js');
+    processes[ i ] = child_process.fork( './start.js' );
     processes[ i ].on( 'message', ( m ) => {
         processEvent.msg( i, m );
     } );
@@ -122,8 +123,6 @@ var processEvent = {
                 n_fail++;
                 total.fail++
                 logger( "WARN", `[WARN][Process-${i}]`, `Code: ${code}` );
-            }else{
-                n_unknow++;
             }
         } else if ( type == "console" ) {
             logger( "INFO", `[INFO][Process-${i}]`, msg.data );
@@ -148,11 +147,11 @@ var processEvent = {
     }
 }
 
-function main_exit(){
+function main_exit() {
     processes.forEach( e => {
         e.send( [ "exit" ] );
     } )
-    logger( "INFO", `[INFO][Process-Main]`, `total: ${total.total}, fail: ${total.fail}, success: ${total.success}, unknow: ${total.total - total.fail - total.success}` );
+    logger( "INFO", `[INFO][Process-Main]`, `total: ${total.total}, fail: ${total.fail}, success: ${total.success}` );
     Object.keys( codeList ).forEach( e => {
         if ( e != "null" ) {
             logger( "INFO", `[INFO][Process-Main]`, `${e}: ${codeList[e]}` );

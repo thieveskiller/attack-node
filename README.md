@@ -36,7 +36,7 @@
 - total: 每秒上报的请求数总和
 - fail：失败请求数
 - success：成功请求数
-- unknow：状态未知的返回（error为null且statusCode也为null）
+- ~~unknow：状态未知的返回（error为null且statusCode也为null）~~
 
 # 警告
 ## 进程数
